@@ -39,16 +39,8 @@ void OnDeinit(const int reason)
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick(){
-
-
-
-
-
-
-
-
-
-
+   //if last order executed
+   bot.setPendientOrder();
 
 }      
       
