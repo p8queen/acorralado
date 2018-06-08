@@ -34,7 +34,7 @@ Acorralado::Acorralado()
   {
    ArrayInitialize(lsNumOrder, -1);
    p=0;
-   deltaTips = 30*0.0001;
+   deltaTips = 40*0.0001;
    balance = 0;
   }
 //+------------------------------------------------------------------+
@@ -51,14 +51,14 @@ void Acorralado::setInitialOrder(int OP){
    if(OP==OP_BUY){
       price = Ask;
       priceBuys = price;
-      st = priceBuys - 2*deltaTips;
+      st = priceBuys - 2*deltaTips - 5*deltaTips;
       tp = priceBuys + deltaTips;
       priceSells = priceBuys - deltaTips;
       }
    else{
       price = Bid;
       priceSells = price;
-      st = priceSells + 2*deltaTips;
+      st = priceSells + 2*deltaTips + 5*deltaTips;
       tp = priceSells - deltaTips;
       priceBuys = priceSells + deltaTips;
       }
@@ -68,36 +68,36 @@ void Acorralado::setInitialOrder(int OP){
    lots += 0.02;
    
    if(OP==OP_BUY){   
-      lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,priceSells+2*deltaTips,priceSells-deltaTips,"bot acorralado");
+      lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,priceSells+2*deltaTips+5*deltaTips,priceSells-deltaTips,"bot acorralado");
   }else{
-      lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,priceBuys-2*deltaTips,priceBuys+deltaTips,"bot acorralado");
+      lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,priceBuys-2*deltaTips-5*deltaTips,priceBuys+deltaTips,"bot acorralado");
       }
    
     
    }
  
  void Acorralado::setPendingOrder(void){
-      if(!OrderSelect(lsNumOrder[p],SELECT_BY_TICKET)){
-         Alert("Error Select Order ", GetLastError());
-         return;
-         }
+      if(OrderSelect(lsNumOrder[p],SELECT_BY_TICKET,MODE_TRADES)){
+         
          
       if(OrderType()==OP_SELL){
          //open buystop
          lots *= 2;
          p++;
-         lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,priceBuys-2*deltaTips,priceBuys+deltaTips,"bot acorralado");
+         lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,priceBuys-2*deltaTips-5*deltaTips,priceBuys+deltaTips,"bot acorralado");
         }
       if(OrderType()==OP_BUY){
          //open sellstop
          lots *= 2;
          p++;
-         lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,priceSells+2*deltaTips,priceSells-deltaTips,"bot acorralado");
+         lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,priceSells+2*deltaTips+5*deltaTips,priceSells-deltaTips,"bot acorralado");
          }
  
+   }
  }
  
  double Acorralado::getBalance(void){
+   balance = 0;
    for(char z=0;z<p;z++){
       if(!OrderSelect(lsNumOrder[z],SELECT_BY_TICKET))
          Alert("Error Select getBalance, ",GetLastError());
@@ -107,7 +107,7 @@ void Acorralado::setInitialOrder(int OP){
  }
  
  void Acorralado::closePendingOrder(void){
-   if(!OrderSelect(lsNumOrder[0],SELECT_BY_TICKET)){
+   if(OrderSelect(lsNumOrder[0],SELECT_BY_TICKET,MODE_HISTORY)){
       if(!OrderDelete(lsNumOrder[p]))
          Alert("Close Pending Order Error: ", GetLastError());
       }

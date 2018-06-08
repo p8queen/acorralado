@@ -18,6 +18,7 @@
 #include "acorralado.mqh"
 
 Acorralado bot;
+double profit;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -40,7 +41,12 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick(){
    //if last order executed
-   bot.setPendientOrder();
+   
+   profit = 0;
+   bot.setPendingOrder();
+   profit = bot.getBalance();
+   Comment("Balance= ",profit);
+   bot.closePendingOrder();
 
 }      
       
