@@ -13,6 +13,7 @@
 class Acorralado
   {
 private:
+   string name;
    int lsNumOrder[10];
    char p;
    double deltaTips, lots, deltaStTp;
@@ -21,7 +22,7 @@ private:
    bool botIsOpen;
    
 public:
-                     Acorralado();
+                     Acorralado(string robotName);
                     ~Acorralado();
   void               setInitialOrder(int OP);                    
   void               setPendingOrder();                    
@@ -31,7 +32,7 @@ public:
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-Acorralado::Acorralado()
+Acorralado::Acorralado(string robotName)
   {
    ArrayInitialize(lsNumOrder, -1);
    p=0;
@@ -39,6 +40,7 @@ Acorralado::Acorralado()
    deltaStTp = 2*0.0001;
    balance = 0;
    botIsOpen = true;
+   name = robotName;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -120,7 +122,7 @@ void Acorralado::setInitialOrder(int OP){
          if(!OrderDelete(lsNumOrder[p]))
             Print("Close Pending Order Error: ", GetLastError());
          botIsOpen = false;
-         Print("bot was shutdown, balance is: ", balance);
+         Print("bot: ",name, ", was shutdown, balance is: ", balance);
          }
       
       }

@@ -17,14 +17,15 @@
 #property strict
 #include "acorralado.mqh"
 
-Acorralado bot;
-double profit;
+Acorralado bot("bot"), tob("tob");
+double profitBot, profitTob;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
   {
   bot.setInitialOrder(OP_SELL);
+  tob.setInitialOrder(OP_BUY);
 
   return(INIT_SUCCEEDED);
   }
@@ -42,11 +43,15 @@ void OnDeinit(const int reason)
 void OnTick(){
    //if last order executed
    
-   profit = 0;
+   profitTob = 0;
+   profitBot = 0;
    bot.setPendingOrder();
-   profit = bot.getBalance();
-   Comment("Balance= ",profit);
+   tob.setPendingOrder();
+   profitBot = bot.getBalance();
+   profitTob = tob.getBalance();
+   Comment("Balance bot= ",profitBot, ", balance tob= ", profitTob);
    bot.closePendingOrder();
+   tob.closePendingOrder();
 
 }      
       
