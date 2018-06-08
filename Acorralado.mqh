@@ -15,9 +15,10 @@ class Acorralado
 private:
    int lsNumOrder[10];
    char p;
-   double deltaTips, lots;
+   double deltaTips, lots, deltaStTp;
    double priceBuys, priceSells;
    double balance;
+   bool botIsOpen;
    
 public:
                      Acorralado();
@@ -35,7 +36,9 @@ Acorralado::Acorralado()
    ArrayInitialize(lsNumOrder, -1);
    p=0;
    deltaTips = 40*0.0001;
+   deltaStTp = 2*0.0001;
    balance = 0;
+   botIsOpen = true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -51,15 +54,15 @@ void Acorralado::setInitialOrder(int OP){
    if(OP==OP_BUY){
       price = Ask;
       priceBuys = price;
-      st = priceBuys - 2*deltaTips - 5*deltaTips;
-      tp = priceBuys + deltaTips;
+      st = priceBuys - 2*deltaTips;
+      tp = priceBuys + deltaTips - deltaStTp;
       priceSells = priceBuys - deltaTips;
       }
    else{
       price = Bid;
       priceSells = price;
       st = priceSells + 2*deltaTips + 5*deltaTips;
-      tp = priceSells - deltaTips;
+      tp = priceSells - deltaTips + deltaStTp;
       priceBuys = priceSells + deltaTips;
       }
    
@@ -68,9 +71,13 @@ void Acorralado::setInitialOrder(int OP){
    lots += 0.02;
    
    if(OP==OP_BUY){   
-      lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,priceSells+2*deltaTips+5*deltaTips,priceSells-deltaTips,"bot acorralado");
+      st = priceSells+2*deltaTips;
+      tp = priceSells-deltaTips + deltaStTp;
+      lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,st,tp,"bot acorralado");
   }else{
-      lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,priceBuys-2*deltaTips-5*deltaTips,priceBuys+deltaTips,"bot acorralado");
+      st = priceBuys-2*deltaTips;
+      tp = priceBuys+deltaTips - deltaStTp;
+      lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,st,tp,"bot acorralado");
       }
    
     
@@ -107,8 +114,14 @@ void Acorralado::setInitialOrder(int OP){
  }
  
  void Acorralado::closePendingOrder(void){
-   if(OrderSelect(lsNumOrder[0],SELECT_BY_TICKET,MODE_HISTORY)){
-      if(!OrderDelete(lsNumOrder[p]))
-         Alert("Close Pending Order Error: ", GetLastError());
+   if(botIsOpen){
+      
+      if(priceBuys + deltaTips < Bid || priceSells - deltaTips > Bid){
+         if(!OrderDelete(lsNumOrder[p]))
+            Print("Close Pending Order Error: ", GetLastError());
+         botIsOpen = false;
+         Print("bot was shutdown, balance is: ", balance);
+         }
+      
       }
    }

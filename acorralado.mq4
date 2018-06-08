@@ -24,7 +24,7 @@ double profit;
 //+------------------------------------------------------------------+
 int OnInit()
   {
-  bot.setInitialOrder(OP_BUY);
+  bot.setInitialOrder(OP_SELL);
 
   return(INIT_SUCCEEDED);
   }
