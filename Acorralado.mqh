@@ -23,7 +23,8 @@ public:
                      Acorralado();
                     ~Acorralado();
   void               setInitialOrder(int OP);                    
-  void               setPendientOrder();                    
+  void               setPendingOrder();                    
+  void               closePendingOrder();                    
   double             getBalance();
   };
 //+------------------------------------------------------------------+
@@ -75,9 +76,12 @@ void Acorralado::setInitialOrder(int OP){
     
    }
  
- Acorralado::setPendientOrder(void){
-      if(!OrderSelect(lsNumOrder[p],SELECT_BY_TICKET))
+ void Acorralado::setPendingOrder(void){
+      if(!OrderSelect(lsNumOrder[p],SELECT_BY_TICKET)){
          Alert("Error Select Order ", GetLastError());
+         return;
+         }
+         
       if(OrderType()==OP_SELL){
          //open buystop
          lots *= 2;
@@ -92,3 +96,19 @@ void Acorralado::setInitialOrder(int OP){
          }
  
  }
+ 
+ double Acorralado::getBalance(void){
+   for(char z=0;z<p;z++){
+      if(!OrderSelect(lsNumOrder[z],SELECT_BY_TICKET))
+         Alert("Error Select getBalance, ",GetLastError());
+      balance += OrderProfit()+OrderCommission()+OrderSwap();
+      }
+   return balance;
+ }
+ 
+ void Acorralado::closePendingOrder(void){
+   if(!OrderSelect(lsNumOrder[0],SELECT_BY_TICKET)){
+      if(!OrderDelete(lsNumOrder[p]))
+         Alert("Close Pending Order Error: ", GetLastError());
+      }
+   }
