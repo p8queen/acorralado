@@ -24,23 +24,21 @@ private:
 public:
                      Acorralado(string robotName);
                     ~Acorralado();
+  void               setInitialValues();
   void               setInitialOrder(int OP);                    
   void               setPendingOrder();                    
   void               closePendingOrder();                    
   double             getBalance();
+  bool               getBotIsOpen(){ return botIsOpen;}
+  int                getTicketLastExecutedOrder(){ return lsNumOrder[p-1];}
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 Acorralado::Acorralado(string robotName)
   {
-   ArrayInitialize(lsNumOrder, -1);
-   p=0;
-   deltaTips = 40*0.0001;
-   deltaStTp = 2*0.0001;
-   balance = 0;
-   botIsOpen = true;
    name = robotName;
+   setInitialValues();
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -49,6 +47,15 @@ Acorralado::~Acorralado()
   {
   }
 //+------------------------------------------------------------------+
+void Acorralado::setInitialValues(void){
+   ArrayInitialize(lsNumOrder, -1);
+   p=0;
+   deltaTips = 40*0.0001;
+   deltaStTp = 2*0.0001;
+   balance = 0;
+   botIsOpen = true;
+
+   }
 
 void Acorralado::setInitialOrder(int OP){
    double price, st, tp;
@@ -127,3 +134,5 @@ void Acorralado::setInitialOrder(int OP){
       
       }
    }
+ 
+ 

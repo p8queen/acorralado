@@ -19,6 +19,7 @@
 
 Acorralado bot("bot"), tob("tob");
 double profitBot, profitTob;
+int lastOP;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -53,6 +54,22 @@ void OnTick(){
    bot.closePendingOrder();
    tob.closePendingOrder();
 
+   if(!bot.getBotIsOpen()){
+      if(!OrderSelect(bot.getTicketLastExecutedOrder(),SELECT_BY_TICKET,MODE_HISTORY))
+         Comment("Error Select Order: ", GetLastError());
+      lastOP = OrderType();
+      bot.setInitialValues();
+      bot.setInitialOrder((lastOP+1)%2);
+      }
+   
+   if(!tob.getBotIsOpen()){
+      if(!OrderSelect(tob.getTicketLastExecutedOrder(),SELECT_BY_TICKET,MODE_HISTORY))
+         Comment("Error Select Order: ", GetLastError());
+      lastOP = OrderType();
+      tob.setInitialValues();
+      tob.setInitialOrder((lastOP+1)%2);
+      }
+      
 }      
       
     
