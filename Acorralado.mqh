@@ -100,13 +100,15 @@ void Acorralado::setInitialOrder(int OP){
          //open buystop
          lots *= 2;
          p++;
-         lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,priceBuys-2*deltaTips,priceBuys+deltaTips-deltaStTp,"bot acorralado");
+         lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,
+                        priceBuys-2*deltaTips,priceBuys+deltaTips-deltaStTp,"bot acorralado");
         }
       if(OrderType()==OP_BUY){
          //open sellstop
          lots *= 2;
          p++;
-         lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,priceSells+2*deltaTips,priceSells-deltaTips+deltaStTp,"bot acorralado");
+         lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,
+                        priceSells+2*deltaTips,priceSells-deltaTips+deltaStTp,"bot acorralado");
          }
  
    }
