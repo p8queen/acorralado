@@ -48,9 +48,9 @@ void OnTick(){
    profitBot = 0;
    bot.setPendingOrder();
    tob.setPendingOrder();
-   profitBot = bot.getBalance();
-   profitTob = tob.getBalance();
-   Comment("Balance bot= ",profitBot, ", balance tob= ", profitTob);
+   //profitBot = bot.getBalance();
+   //profitTob = tob.getBalance();
+   //Comment("Balance bot= ",profitBot, ", balance tob= ", profitTob);
    bot.closePendingOrder();
    tob.closePendingOrder();
 
