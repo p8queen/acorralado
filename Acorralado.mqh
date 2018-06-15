@@ -31,6 +31,7 @@ public:
   double             getBalance();
   bool               getBotIsOpen(){ return botIsOpen;}
   int                getTicketLastExecutedOrder(){ return lsNumOrder[p-1];}
+  void               checkOPwhenTakeProfit();
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -127,6 +128,7 @@ void Acorralado::setInitialOrder(int OP){
  void Acorralado::closePendingOrder(void){
    if(botIsOpen){
       
+      checkOPwhenTakeProfit();
       if(priceBuys + deltaTips < Bid || priceSells - deltaTips > Bid){
          if(!OrderDelete(lsNumOrder[p]))
             Print("Close Pending Order Error: ", GetLastError());
@@ -137,4 +139,10 @@ void Acorralado::setInitialOrder(int OP){
       }
    }
  
+ void Acorralado::checkOPwhenTakeProfit(){
+ //check previuos OPs when one order Take Profit
  
+ 
+ 
+ 
+ }
