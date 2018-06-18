@@ -141,8 +141,27 @@ void Acorralado::setInitialOrder(int OP){
  
  void Acorralado::checkOPwhenTakeProfit(){
  //check previuos OPs when one order Take Profit
- 
- 
+      int lastOP, i;
+      i = p-2;
+      if(!OrderSelect(getTicketLastExecutedOrder(),SELECT_BY_TICKET,MODE_HISTORY)){
+         Comment("Last Order is Open, no MODE_HISTORY: ", GetLastError());
+      }else{
+         //close previuos Open Order p-2, p-3, p-n, if p-n >= 0; 
+         // p-1 is lastExecutedOrder; p is pending order
+         while(i>=0){
+            if(!OrderSelect(lsNumOrder[i],SELECT_BY_TICKET,MODE_HISTORY)){
+                  Print("checkOPwhenTakeProfit: ", GetLastError(), " try to close order");
+            }else{
+               lastOP = OrderType();
+               if(!OrderClose(lsNumOrder[i],OrderLots(),(lastOP+1)%2,10))
+                  Print("checkOPwhenTakeProfit OrderClose erro: ", GetLastError());
+               i--;
+                  }
+               }//whille
+            }//if-else
+            
+         
+         
  
  
  }
