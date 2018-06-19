@@ -52,7 +52,7 @@ void Acorralado::setInitialValues(void){
    ArrayInitialize(lsNumOrder, -1);
    p=0;
    deltaTips = 30*0.0001;
-   deltaStTp = 2*0.0001;
+   deltaStTp = 2*0.00001;
    balance = 0;
    botIsOpen = true;
 
@@ -129,7 +129,7 @@ void Acorralado::setInitialOrder(int OP){
    if(botIsOpen){
       
       checkOPwhenTakeProfit();
-      if(priceBuys + deltaTips < Bid || priceSells - deltaTips > Bid){
+      if(priceBuys + deltaTips < Bid || priceSells - deltaTips > Ask){
          if(!OrderDelete(lsNumOrder[p]))
             Print("Close Pending Order Error: ", GetLastError());
          botIsOpen = false;
@@ -141,7 +141,7 @@ void Acorralado::setInitialOrder(int OP){
  
  void Acorralado::checkOPwhenTakeProfit(){
  //check previuos OPs when one order Take Profit
-      int lastOP, i;
+      int orderOP, i;
       i = p-2;
       if(!OrderSelect(getTicketLastExecutedOrder(),SELECT_BY_TICKET,MODE_HISTORY)){
          Comment("Last Order is Open, no MODE_HISTORY: ", GetLastError());
@@ -152,8 +152,8 @@ void Acorralado::setInitialOrder(int OP){
             if(!OrderSelect(lsNumOrder[i],SELECT_BY_TICKET,MODE_HISTORY)){
                   Print("checkOPwhenTakeProfit: ", GetLastError(), " try to close order");
             }else{
-               lastOP = OrderType();
-               if(!OrderClose(lsNumOrder[i],OrderLots(),(lastOP+1)%2,10))
+               orderOP = OrderType();
+               if(!OrderClose(lsNumOrder[i],OrderLots(),(orderOP+1)%2,10))
                   Print("checkOPwhenTakeProfit OrderClose erro: ", GetLastError());
                i--;
                   }
