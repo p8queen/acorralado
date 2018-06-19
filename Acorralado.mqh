@@ -52,7 +52,7 @@ void Acorralado::setInitialValues(void){
    ArrayInitialize(lsNumOrder, -1);
    p=0;
    deltaTips = 30*0.0001;
-   deltaStTp = 2*0.00001;
+   deltaStTp = 5*0.00001;
    balance = 0;
    botIsOpen = true;
 
