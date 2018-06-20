@@ -20,6 +20,7 @@ private:
    double priceBuys, priceSells;
    double balance;
    bool botIsOpen;
+   int firstOrderOP;
    
 public:
                      Acorralado(string robotName);
@@ -51,16 +52,18 @@ Acorralado::~Acorralado()
 void Acorralado::setInitialValues(void){
    ArrayInitialize(lsNumOrder, -1);
    p=0;
-   deltaTips = 30*0.0001;
-   deltaStTp = 5*0.00001;
    balance = 0;
    botIsOpen = true;
 
    }
 
 void Acorralado::setInitialOrder(int OP){
-   double price, st, tp;
+   double price, st, tp, deltaOrders;
+   deltaTips = 40*0.0001;
+   deltaStTp = 5*0.00001;
    lots = 0.01;
+   firstOrderOP = OP;
+   
    if(OP==OP_BUY){
       price = Ask;
       priceBuys = price;
@@ -90,6 +93,12 @@ void Acorralado::setInitialOrder(int OP){
       lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,st,tp,"bot acorralado");
       }
    
+   //set parameters for 0.06, 0.12, etc lots
+   deltaOrders = 5*0.0001;
+   if(firstOrderOP == OP_BUY)
+      priceBuys = priceSells + deltaOrders;
+   else
+      priceSells = priceBuys - deltaOrders;
     
    }
  
@@ -122,12 +131,14 @@ void Acorralado::setInitialOrder(int OP){
          Alert("Error Select getBalance, ",GetLastError());
       balance += OrderProfit()+OrderCommission()+OrderSwap();
       }
+      if(balance>(-1) && p>1)
+         Alert("-- at getBalance, ", name, " balance: ", balance, " p: ", p);
    return balance;
  }
  
  void Acorralado::closePendingOrder(void){
    if(botIsOpen){
-      
+     /* 
       checkOPwhenTakeProfit();
       if(priceBuys + deltaTips < Bid || priceSells - deltaTips > Ask){
          if(!OrderDelete(lsNumOrder[p]))
@@ -135,7 +146,7 @@ void Acorralado::setInitialOrder(int OP){
          botIsOpen = false;
          Print("bot: ",name, ", was shutdown, balance is: ", balance);
          }
-      
+      */
       }
    }
  
