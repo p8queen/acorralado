@@ -7,6 +7,9 @@
 #property link      "http://www.awtt.com.ar"
 #property version   "1.00"
 #property strict
+
+input double panicProfit = -1;
+input double deltaOrders = 5;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -58,7 +61,7 @@ void Acorralado::setInitialValues(void){
    }
 
 void Acorralado::setInitialOrder(int OP){
-   double price, st, tp, deltaOrders;
+   double price, st, tp;
    setInitialValues();
    deltaTips = 40*0.0001;
    deltaStTp = 5*0.00001;
@@ -95,11 +98,11 @@ void Acorralado::setInitialOrder(int OP){
       }
    
    //set parameters for 0.06, 0.12, etc lots
-   deltaOrders = 5*0.0001;
+   
    if(firstOrderOP == OP_BUY)
-      priceBuys = priceSells + deltaOrders;
+      priceBuys = priceSells + deltaOrders*0.001;
    else
-      priceSells = priceBuys - deltaOrders;
+      priceSells = priceBuys - deltaOrders*0.0001;
     
    }
  
@@ -134,7 +137,7 @@ void Acorralado::setInitialOrder(int OP){
       }
       if(p==2 && balance >= 1 )
          closePendingOrder();
-      if(p>2 && balance >= (-1) )
+      if(p>2 && balance >= panicProfit )
          closePendingOrder();
    return balance;
  }
