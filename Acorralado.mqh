@@ -167,18 +167,13 @@ void Acorralado::setInitialOrder(int OP){
  
  void Acorralado::closeWhenFirstOrderTakeProfit(){
  //check previuos OPs when one order Take Profit
-      double priceOP;
-      if(OrderSelect(lsNumOrder[0],SELECT_BY_TICKET,MODE_HISTORY)){
+      if(OrderSelect(lsNumOrder[0],SELECT_BY_TICKET)){
          //Comment("Last Order is Open, no MODE_HISTORY: ", GetLastError());
-         Print("--* first Order profit: ", OrderProfit());
-         if(OrderType()==OP_BUY)
-            priceOP = Bid;
-         else
-            priceOP = Ask;
-            
-         OrderClose(lsNumOrder[0],OrderLots(),priceOP,10);
+         if(StringFind(OrderComment(),"[tp]")>0){
+            //Print(" --* Comment first order, profit <3.5: ", OrderComment());
          OrderDelete(lsNumOrder[1]);
          botIsOpen = false;
          }
+     }    
   
  }
