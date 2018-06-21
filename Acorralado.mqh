@@ -32,7 +32,7 @@ public:
   double             getBalance();
   bool               getBotIsOpen(){ return botIsOpen;}
   int                getTicketLastExecutedOrder(){ return lsNumOrder[p-1];}
-  void               checkOPwhenTakeProfit();
+  void               closeWhenFirstOrderTakeProfit();
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -40,7 +40,7 @@ public:
 Acorralado::Acorralado(string robotName)
   {
    name = robotName;
-   setInitialValues();
+   
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -59,6 +59,7 @@ void Acorralado::setInitialValues(void){
 
 void Acorralado::setInitialOrder(int OP){
    double price, st, tp, deltaOrders;
+   setInitialValues();
    deltaTips = 40*0.0001;
    deltaStTp = 5*0.00001;
    lots = 0.01;
@@ -164,29 +165,20 @@ void Acorralado::setInitialOrder(int OP){
       
    }
  
- void Acorralado::checkOPwhenTakeProfit(){
+ void Acorralado::closeWhenFirstOrderTakeProfit(){
  //check previuos OPs when one order Take Profit
-      int orderOP, i;
-      i = p-2;
-      if(!OrderSelect(getTicketLastExecutedOrder(),SELECT_BY_TICKET,MODE_HISTORY)){
-         Comment("Last Order is Open, no MODE_HISTORY: ", GetLastError());
-      }else{
-         //close previuos Open Order p-2, p-3, p-n, if p-n >= 0; 
-         // p-1 is lastExecutedOrder; p is pending order
-         while(i>=0){
-            if(!OrderSelect(lsNumOrder[i],SELECT_BY_TICKET,MODE_HISTORY)){
-                  Print("checkOPwhenTakeProfit: ", GetLastError(), " try to close order");
-            }else{
-               orderOP = OrderType();
-               if(!OrderClose(lsNumOrder[i],OrderLots(),(orderOP+1)%2,10))
-                  Print("checkOPwhenTakeProfit OrderClose erro: ", GetLastError());
-               i--;
-                  }
-               }//whille
-            }//if-else
+      double priceOP;
+      if(OrderSelect(lsNumOrder[0],SELECT_BY_TICKET,MODE_HISTORY)){
+         //Comment("Last Order is Open, no MODE_HISTORY: ", GetLastError());
+         Print("--* first Order profit: ", OrderProfit());
+         if(OrderType()==OP_BUY)
+            priceOP = Bid;
+         else
+            priceOP = Ask;
             
-         
-         
- 
- 
+         OrderClose(lsNumOrder[0],OrderLots(),priceOP,10);
+         OrderDelete(lsNumOrder[1]);
+         botIsOpen = false;
+         }
+  
  }

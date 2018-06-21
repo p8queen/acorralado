@@ -48,6 +48,10 @@ void OnTick(){
    profitBot = 0;
    bot.setPendingOrder();
    tob.setPendingOrder();
+   bot.closeWhenFirstOrderTakeProfit();
+   tob.closeWhenFirstOrderTakeProfit();
+   bot.getBalance();
+   tob.getBalance();
    
 
    if(!bot.getBotIsOpen() && !tob.getBotIsOpen()){
