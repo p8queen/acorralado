@@ -131,23 +131,37 @@ void Acorralado::setInitialOrder(int OP){
          Alert("Error Select getBalance, ",GetLastError());
       balance += OrderProfit()+OrderCommission()+OrderSwap();
       }
-      if(balance>(-1) && p>1)
-         Alert("-- at getBalance, ", name, " balance: ", balance, " p: ", p);
+      if(p==2 && balance >= 1 )
+         closePendingOrder();
+      if(p>2 && balance >= (-1) )
+         closePendingOrder();
    return balance;
  }
  
  void Acorralado::closePendingOrder(void){
+   double priceOP;
    if(botIsOpen){
-     /* 
-      checkOPwhenTakeProfit();
-      if(priceBuys + deltaTips < Bid || priceSells - deltaTips > Ask){
-         if(!OrderDelete(lsNumOrder[p]))
-            Print("Close Pending Order Error: ", GetLastError());
+        if(!OrderDelete(lsNumOrder[p]))
+            Print("**- OrderDelete error: ", GetLastError());
+         for(int z=p-1;z>=0;z--){
+            if(OrderSelect(lsNumOrder[z],SELECT_BY_TICKET)){
+                   if(OrderType()==OP_BUY)
+                     priceOP = Bid;
+                   else
+                     priceOP = Ask;
+                       
+                   OrderClose(lsNumOrder[z],OrderLots(),priceOP,10);
+                     
+            
+               }//if
+            }//for
+         
+            
          botIsOpen = false;
          Print("bot: ",name, ", was shutdown, balance is: ", balance);
          }
-      */
-      }
+     
+      
    }
  
  void Acorralado::checkOPwhenTakeProfit(){

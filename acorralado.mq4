@@ -48,27 +48,15 @@ void OnTick(){
    profitBot = 0;
    bot.setPendingOrder();
    tob.setPendingOrder();
-   profitBot = bot.getBalance();
-   profitTob = tob.getBalance();
-   Comment("Balance bot= ",profitBot, ", balance tob= ", profitTob);
-   bot.closePendingOrder();
-   tob.closePendingOrder();
+   
 
-   if(!bot.getBotIsOpen()){
+   if(!bot.getBotIsOpen() && !tob.getBotIsOpen()){
       if(!OrderSelect(bot.getTicketLastExecutedOrder(),SELECT_BY_TICKET,MODE_HISTORY))
          Comment("Error Select Order: ", GetLastError());
-      lastOP = OrderType();
-      bot.setInitialValues();
-      bot.setInitialOrder((lastOP+1)%2);
+      bot.setInitialOrder(OP_BUY);
+      tob.setInitialOrder(OP_SELL);
       }
    
-   if(!tob.getBotIsOpen()){
-      if(!OrderSelect(tob.getTicketLastExecutedOrder(),SELECT_BY_TICKET,MODE_HISTORY))
-         Comment("Error Select Order: ", GetLastError());
-      lastOP = OrderType();
-      tob.setInitialValues();
-      tob.setInitialOrder((lastOP+1)%2);
-      }
       
 }      
       
