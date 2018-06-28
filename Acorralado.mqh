@@ -9,7 +9,7 @@
 #property strict
 
 input double panicProfit = -1;
-input double deltaOrders = 5;
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -24,6 +24,7 @@ private:
    double balance;
    bool botIsOpen;
    int firstOrderOP;
+   int magicNumber;
    
 public:
                      Acorralado(string robotName);
@@ -57,6 +58,7 @@ void Acorralado::setInitialValues(void){
    p=0;
    balance = 0;
    botIsOpen = true;
+   magicNumber = 1500;
 
    }
 
@@ -65,6 +67,7 @@ void Acorralado::setInitialOrder(int OP){
    setInitialValues();
    deltaTips = 40*0.0001;
    deltaStTp = 5*0.00001;
+   deltaOrders = 40*0.0001;
    lots = 0.01;
    firstOrderOP = OP;
    
@@ -83,48 +86,51 @@ void Acorralado::setInitialOrder(int OP){
       priceBuys = priceSells + deltaTips;
       }
    
-   lsNumOrder[p] = OrderSend("EURUSD",OP,lots,price,10,st,tp,"bot acorralado");
-   p++;
+   OrderSend("EURUSD",OP,lots,price,10,st,tp,name,magicNumber);
    lots += 0.02;
    
    if(OP==OP_BUY){   
       st = priceSells+2*deltaTips;
       tp = priceSells-deltaTips + deltaStTp;
-      lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,st,tp,"bot acorralado");
+      OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,st,tp,name,magicNumber);
   }else{
       st = priceBuys-2*deltaTips;
       tp = priceBuys+deltaTips - deltaStTp;
-      lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,st,tp,"bot acorralado");
+      OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,st,tp,name,magicNumber);
       }
    
    //set parameters for 0.06, 0.12, etc lots
    
    if(firstOrderOP == OP_BUY)
-      priceBuys = priceSells + deltaOrders*0.001;
+      priceBuys = priceSells + deltaOrders;
    else
-      priceSells = priceBuys - deltaOrders*0.0001;
+      priceSells = priceBuys - deltaOrders;
     
    }
  
  void Acorralado::setPendingOrder(void){
-      if(OrderSelect(lsNumOrder[p],SELECT_BY_TICKET,MODE_TRADES)){
-         
-         
-      if(OrderType()==OP_SELL){
-         //open buystop
-         lots *= 2;
-         p++;
-         lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,
-                        priceBuys-2*deltaTips,priceBuys+deltaTips-deltaStTp,"bot acorralado");
-        }
-      if(OrderType()==OP_BUY){
-         //open sellstop
-         lots *= 2;
-         p++;
-         lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,
-                        priceSells+2*deltaTips,priceSells-deltaTips+deltaStTp,"bot acorralado");
-         }
- 
+      int a=OrdersTotal()-1;
+      while(a>=0){
+      
+         if(OrderSelect(a,SELECT_BY_POS){
+            if(OrderMagicNumber()==magicNumber){   
+                         
+               if(OrderType()==OP_SELL){
+                  //open buystop
+                  lots *= 2;
+                  OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,
+                           priceBuys-2*deltaTips,priceBuys+deltaTips-deltaStTp,name,magicNumber);
+                 }
+               if(OrderType()==OP_BUY){
+                  //open sellstop
+                  lots *= 2;
+                  OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,
+                            priceSells+2*deltaTips,priceSells-deltaTips+deltaStTp,name,magicNumber);
+                  }
+                  a = -1;
+            }else{
+               a--; }
+         }//while
    }
  }
  
