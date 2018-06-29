@@ -27,7 +27,7 @@ private:
    int magicNumber;
    
 public:
-                     Acorralado(string robotName);
+                     Acorralado(string robotName, int robotMagicNumber);
                     ~Acorralado();
   void               setInitialValues();
   void               setInitialOrder(int OP);                    
@@ -41,10 +41,10 @@ public:
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-Acorralado::Acorralado(string robotName)
+Acorralado::Acorralado(string robotName, int robotMagicNumber)
   {
    name = robotName;
-   
+   magicNumber = robotMagicNumber;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -58,7 +58,7 @@ void Acorralado::setInitialValues(void){
    p=0;
    balance = 0;
    botIsOpen = true;
-   magicNumber = 1500;
+   
 
    }
 
@@ -176,12 +176,22 @@ void Acorralado::setInitialOrder(int OP){
  
  void Acorralado::closeWhenFirstOrderTakeProfit(){
  //check previuos OPs when one order Take Profit
-      if(OrderSelect(lsNumOrder[0],SELECT_BY_TICKET)){
-         //Comment("Last Order is Open, no MODE_HISTORY: ", GetLastError());
-         if(StringFind(OrderComment(),"[tp]")>0){
-            //Print(" --* Comment first order, profit <3.5: ", OrderComment());
-         OrderDelete(lsNumOrder[1]);
-         botIsOpen = false;
+     int a=OrdersHistoryTotal()-1;
+     int b = a-10;
+      while(b>=0 && b<=a){
+      
+         if(OrderSelect(a,SELECT_BY_POS,MODE_HISTORY){
+            if(OrderMagicNumber()==magicNumber){
+               if(StringFind(OrderComment(),"[tp]")>0){
+                  //close all open orders
+                  closePendingOrder();
+                  a=-1
+                  botIsOpen = false;
+                  }
+                  }
+                  }
+          
+         a--;
          }
      }    
   

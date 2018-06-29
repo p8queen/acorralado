@@ -17,7 +17,7 @@
 #property strict
 #include "acorralado.mqh"
 
-Acorralado bot("bot"), tob("tob");
+Acorralado bot("bot",1500), tob("tob",1600);
 double profitBot, profitTob;
 int lastOP;
 //+------------------------------------------------------------------+
