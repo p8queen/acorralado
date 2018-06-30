@@ -53,14 +53,14 @@ void OnTick(){
    bot.getBalance();
    tob.getBalance();
    
-
+/*
    if(!bot.getBotIsOpen() && !tob.getBotIsOpen()){
       if(!OrderSelect(bot.getTicketLastExecutedOrder(),SELECT_BY_TICKET,MODE_HISTORY))
          Comment("Error Select Order: ", GetLastError());
       bot.setInitialOrder(OP_BUY);
       tob.setInitialOrder(OP_SELL);
       }
-   
+  */ 
       
 }      
       
