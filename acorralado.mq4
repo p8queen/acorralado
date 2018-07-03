@@ -4,12 +4,6 @@
 //|                                          https://www.awtt.com.ar |
 //+------------------------------------------------------------------+
 
-//+------------------------------------------------------------------+
-//|el usuario hace una orden de compra o venta, con las lineas 
-//| Ema separadas. Luego el robot va comprando o vendiendo o cerrando
-//| en los cruces. Usa periodos H1 y las EMA de 10 y 50. 
-//+------------------------------------------------------------------+
-
 //+
 #property copyright "Copyright 2018, Gustavo Carmona"
 #property link      "https://www.awtt.com.ar"
@@ -46,12 +40,17 @@ void OnTick(){
    
    profitTob = 0;
    profitBot = 0;
-   bot.setPendingOrder();
-   tob.setPendingOrder();
-   bot.closeWhenFirstOrderTakeProfit();
-   tob.closeWhenFirstOrderTakeProfit();
-   bot.getBalance();
-   tob.getBalance();
+   if(bot.getBotIsOpen()){
+      bot.setPendingOrder();
+      bot.getBalance();
+      //bot.closeWhenFirstOrderTakeProfit();   
+      }
+   if(tob.getBotIsOpen()){
+      tob.setPendingOrder();
+      //tob.closeWhenFirstOrderTakeProfit();
+      tob.getBalance();
+      }
+   
    
 /*
    if(!bot.getBotIsOpen() && !tob.getBotIsOpen()){

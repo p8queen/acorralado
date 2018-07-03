@@ -58,9 +58,9 @@ void Acorralado::setInitialValues(void){
 void Acorralado::setInitialOrder(int OP){
    double price, st, tp;
    setInitialValues();
-   deltaTips = 40*0.0001;
+   deltaTips = 50*0.0001;
    deltaStTp = 5*0.00001;
-   deltaOrders = 40*0.0001;
+   deltaOrders = 50*0.0001;
    lots = 0.01;
    firstOrderOP = OP;
    
@@ -113,12 +113,14 @@ void Acorralado::setInitialOrder(int OP){
                   lots *= 2;
                   OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,
                            priceBuys-2*deltaTips,priceBuys+deltaTips-deltaStTp,name,magicNumber);
+                 
                  }
                if(OrderType()==OP_BUY){
                   //open sellstop
                   lots *= 2;
                   OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,
                             priceSells+2*deltaTips,priceSells-deltaTips+deltaStTp,name,magicNumber);
+                  
                   }
                   a = -1;
             }else{
@@ -153,20 +155,20 @@ void Acorralado::setInitialOrder(int OP){
                          
                if(OrderType()==OP_SELL){
                   OrderClose(OrderTicket(),OrderLots(),Ask,10);
-                  a = -1;
+                  
                   }
                if(OrderType()==OP_BUY){
                   OrderClose(OrderTicket(),OrderLots(),Bid,10);
-                  a = -1;
+                  
                   }
                if(OrderType()==OP_BUYSTOP || OrderType()==OP_SELLSTOP){   
                   OrderDelete(OrderTicket());
-                  a = -1;
+                  
                   }
             
-            }else{
-               a--; }
+            }
          }
+         a--;
          }//while 
        
        }//if botisopen
