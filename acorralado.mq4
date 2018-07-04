@@ -1,14 +1,9 @@
 //+------------------------------------------------------------------+
-//|                                                     emaMA.mq4 |
+//|                                                   Acorralado.mq4 |
 //|                                  Copyright 2018, Gustavo Carmona |
 //|                                      awwthttps://www.awtt.com.ar |
 //+------------------------------------------------------------------+
 
-//+------------------------------------------------------------------+
-//|el usuario hace una orden de compra o venta, con las lineas 
-//| Ema separadas. Luego el robot va comprando o vendiendo o cerrando
-//| en los cruces. Usa periodos H1 y las EMA de 10 y 50. 
-//+------------------------------------------------------------------+
 
 //+
 #property copyright "Copyright 2018, Gustavo Carmona"
@@ -17,7 +12,7 @@
 #property strict
 #include "acorralado.mqh"
 
-Acorralado bot("bot"), tob("tob");
+Acorralado bot("bot", 1500), tob("tob", 1600);
 double profitBot, profitTob;
 int lastOP;
 //+------------------------------------------------------------------+
@@ -25,8 +20,10 @@ int lastOP;
 //+------------------------------------------------------------------+
 int OnInit()
   {
-  bot.setInitialOrder(OP_SELL);
-  tob.setInitialOrder(OP_BUY);
+  if(!bot.checkOpenOrders())
+      bot.setInitialOrder(OP_SELL);
+  if(!tob.checkOpenOrders())
+      tob.setInitialOrder(OP_BUY);
 
   return(INIT_SUCCEEDED);
   }
