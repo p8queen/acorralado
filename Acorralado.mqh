@@ -83,9 +83,9 @@ void Acorralado::setInitialValues(void){
 void Acorralado::setInitialOrder(int OP){
    double price, st, tp;
    setInitialValues();
-   deltaTips = 40*0.0001;
-   deltaStTp = 5*0.00001;
-   lots = 0.01;
+   deltaTips = 50*10*Point;
+   deltaStTp = 2*10*Point;
+   lots = 0.1;
    firstOrderOP = OP;
    
    if(OP==OP_BUY){
@@ -103,26 +103,26 @@ void Acorralado::setInitialOrder(int OP){
       priceBuys = priceSells + deltaTips;
       }
    
-   lsNumOrder[p] = OrderSend("EURUSD",OP,lots,price,10,st,tp,"bot acorralado",magicNumber);
+   lsNumOrder[p] = OrderSend(Symbol(),OP,lots,price,10,st,tp,"bot acorralado",magicNumber);
    p++;
-   lots += 0.02;
+   lots += 0.2;
    
    if(OP==OP_BUY){   
       st = priceSells+2*deltaTips;
       tp = priceSells-deltaTips + deltaStTp;
-      lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,st,tp,"bot acorralado",magicNumber);
+      lsNumOrder[p] = OrderSend(Symbol(),OP_SELLSTOP,lots,priceSells,10,st,tp,"bot acorralado",magicNumber);
   }else{
       st = priceBuys-2*deltaTips;
       tp = priceBuys+deltaTips - deltaStTp;
-      lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,st,tp,"bot acorralado",magicNumber);
+      lsNumOrder[p] = OrderSend(Symbol(),OP_BUYSTOP,lots,priceBuys,10,st,tp,"bot acorralado",magicNumber);
       }
    
    //set parameters for 0.06, 0.12, etc lots
    
    if(firstOrderOP == OP_BUY)
-      priceBuys = priceSells + deltaOrders*0.001;
+      priceBuys = priceSells + deltaOrders*10*Point;
    else
-      priceSells = priceBuys - deltaOrders*0.0001;
+      priceSells = priceBuys - deltaOrders*10*Point;
     
    }
  
@@ -134,14 +134,14 @@ void Acorralado::setInitialOrder(int OP){
          //open buystop
          lots *= 2;
          p++;
-         lsNumOrder[p] = OrderSend("EURUSD",OP_BUYSTOP,lots,priceBuys,10,
+         lsNumOrder[p] = OrderSend(Symbol(),OP_BUYSTOP,lots,priceBuys,10,
                         priceBuys-2*deltaTips,priceBuys+deltaTips-deltaStTp,"bot acorralado",magicNumber);
         }
       if(OrderType()==OP_BUY){
          //open sellstop
          lots *= 2;
          p++;
-         lsNumOrder[p] = OrderSend("EURUSD",OP_SELLSTOP,lots,priceSells,10,
+         lsNumOrder[p] = OrderSend(Symbol(),OP_SELLSTOP,lots,priceSells,10,
                         priceSells+2*deltaTips,priceSells-deltaTips+deltaStTp,"bot acorralado",magicNumber);
          }
  
