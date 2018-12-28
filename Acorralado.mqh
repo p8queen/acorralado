@@ -85,7 +85,7 @@ void Acorralado::setInitialOrder(int OP){
    setInitialValues();
    deltaTips = 50*10*Point;
    deltaStTp = 2*10*Point;
-   lots = 0.1;
+   lots = 0.01;
    firstOrderOP = OP;
    
    if(OP==OP_BUY){
@@ -105,7 +105,7 @@ void Acorralado::setInitialOrder(int OP){
    
    lsNumOrder[p] = OrderSend(Symbol(),OP,lots,price,10,st,tp,"bot acorralado",magicNumber);
    p++;
-   lots += 0.2;
+   lots += 0.02;
    
    if(OP==OP_BUY){   
       st = priceSells+2*deltaTips;
