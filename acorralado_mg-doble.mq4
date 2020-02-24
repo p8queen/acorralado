@@ -11,9 +11,10 @@
 #property version   "1.00"
 #property strict
 
-int OT=OP_SELL;
-double lots=0.01;
-double profit=0.0, profit_2=0.0, targetProfit=10.0;
+double baseProfit=5.0;
+double lots=0.01, lots_2=0.0;
+int OT, OT_2;
+double profit=0.0, profit_2=0.0, targetProfit=baseProfit, targetProfit_2=baseProfit;
 int magicNumber = 6001;
 int ticket, ticket_2;
 //+------------------------------------------------------------------+
@@ -39,40 +40,64 @@ void OnDeinit(const int reason)
 void OnTick(){
    
    if(!ordersOpen()){
-      ticket=loadOrder();
-      if(!OrderSelect(ticket,SELECT_BY_TICKET))
-         GetLastError("ordersOpen: ", GetLastError);
-      ticket_2=loadOrder();
+      ticket=loadOrder(0.01, ORDER_TYPE_SELL);
+      ticket_2=loadOrder(0.01, ORDER_TYPE_BUY);
       }
       
    profit=getProfit(ticket);
    profit_2=getProfit(ticket_2);
    
-   /*
-   if(profit>=targetProfit){
-      lots=0.01;
-      targetProfit=10.0;
-      closeOrder(ticket);
-      }   
-   */
+   Comment("profit: ",profit, ",_2: ",profit_2, "\n target: ",targetProfit,", ",targetProfit_2);
+  
    if(profit<=(-targetProfit)){
       lots *= 2;
       targetProfit *= 2;
-      if(OT==OP_BUY){
+      targetProfit_2=baseProfit;
+       if(!OrderSelect(ticket,SELECT_BY_TICKET))
+         Print("ordersOpen: ", GetLastError());
+      if(OrderType()==OP_BUY){
          OT=OP_SELL;
+         OT_2=OP_BUY;
          }else{
-         OT=OP_BUY;   
+         OT_2=OP_SELL;
+         OT=OP_BUY;
          }
       closeOrder(ticket);
+      closeOrder(ticket_2);
+      ticket=loadOrder(lots,OT);
+      lots_2=0.01;
+      ticket_2=loadOrder(lots_2,OT_2);
       }    
+      
+       if(profit_2<=(-targetProfit_2)){
+         lots_2 *= 2;
+         targetProfit_2 *= 2;
+         targetProfit=baseProfit;
+          if(!OrderSelect(ticket_2,SELECT_BY_TICKET))
+            Print("ordersOpen: ", GetLastError());
+         if(OrderType()==OP_BUY){
+            OT_2=OP_SELL;
+            OT=OP_BUY;
+            }else{
+            OT=OP_SELL;
+            OT_2=OP_BUY;
+            }
+         closeOrder(ticket);
+         closeOrder(ticket_2);
+         lots=0.01;
+         ticket=loadOrder(lots,OT);
+         ticket_2=loadOrder(lots_2,OT_2);
+      }
+      
 }      
       
-int loadOrder(){
+int loadOrder(double lt, int order_type){
+   //t ticket, lt lots
    double price = Bid;
    int tk;
-   if(OT==OP_BUY)
+   if(order_type==OP_BUY)
       price = Ask;
-   tk=OrderSend(Symbol(),OT,lots,price,10,0,0,"acorralado mg",magicNumber);
+   tk=OrderSend(Symbol(),order_type,lt,price,10,0,0,"acorralado mg",magicNumber);
    return tk;
    }  
  
