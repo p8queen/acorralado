@@ -13,7 +13,7 @@
 
 int OT=OP_SELL;
 double lots=0.01;
-double profit=0.0;
+double profit=0.0, targetProfit=6.0;
 int magicNumber = 6001;
 int ticket;
 //+------------------------------------------------------------------+
@@ -43,13 +43,15 @@ void OnTick(){
       
    profit=getProfit(ticket);
    
-   if(profit>=10){
+   if(profit>=targetProfit){
       lots=0.01;
+      targetProfit=10.0;
       closeOrder(ticket);
       }   
    
-   if(profit<=10){
+   if(profit<=(-targetProfit)){
       lots *= 2;
+      targetProfit *= 2;
       if(OT==OP_BUY){
          OT=OP_SELL;
          }else{
@@ -68,7 +70,7 @@ int loadOrder(){
    return tk;
    }  
  
- bool ordersOpen(){
+bool ordersOpen(){
    bool checkin;
    checkin = false;
    int a=OrdersTotal()-1;
